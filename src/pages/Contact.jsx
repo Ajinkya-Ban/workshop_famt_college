@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 
 function Contact() {
-  const [form, setForm] = useState({
+  const [forms, setForms] = useState({
     name: "",
     email: "",
     mob: "",
     message: "",
   });
+
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForms({ ...forms, [name]: value });
 
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -19,14 +20,22 @@ function Contact() {
   };
 
   const validate = () => {
-    let newErrors = {};
-    if (!form.name.trim()) {
-      newErrors.name = "Name is required";
+    let newErros = {};
+    if (!forms.name.trim()) {
+      newErros.name = "Name is required";
     }
-    if (!form.email.trim()) {
-      newErrors.email = "Email is required";
+    if (!forms.email) {
+      newErros.email = "Email is required";
     }
-    return newErrors;
+    if (!forms.mob) {
+      newErros.mob = "Mobile is required";
+    } else if (!/^[0-9]{10}$/.test(forms.mob)) {
+      newErros.mob = "Enter a valid 10-digit number";
+    }
+    if (!forms.message) {
+      newErros.message = "Message is required";
+    }
+    return newErros;
   };
 
   const handleSubmit = (e) => {
@@ -36,15 +45,14 @@ function Contact() {
       setErrors(ValidationErrors);
     } else {
       setErrors({});
-      alert("Data Submitted");
+      alert("Form Submitted");
     }
   };
 
   const handleClear = () => {
-    setForm({ name: "", email: "", mob: "", message: "" });
+    setForms({ name: "", email: "", mob: "", message: "" });
     setErrors({});
   };
-
   return (
     <div>
       <div className="container my-3">
@@ -59,7 +67,6 @@ function Contact() {
           <div className="col-md-6">
             <h2 className="text-muted">Contact</h2>
             <form onSubmit={handleSubmit}>
-              {/* Name */}
               <div className="mb-3">
                 <label htmlFor="name" className="form-label">
                   Enter Name
@@ -69,17 +76,16 @@ function Contact() {
                   className={`form-control ${errors.name ? "is-invalid" : ""}`}
                   id="name"
                   name="name"
-                  value={form.name}
-                  onChange={handleChange}
                   placeholder="Enter name here"
                   autoComplete="off"
+                  value={forms.name}
+                  onChange={handleChange}
                 />
                 {errors.name && (
                   <div className="invalid-feedback">{errors.name}</div>
                 )}
               </div>
 
-              {/* Email */}
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">
                   Enter Email Address
@@ -89,34 +95,35 @@ function Contact() {
                   name="email"
                   className={`form-control ${errors.email ? "is-invalid" : ""}`}
                   id="email"
-                  value={form.email}
-                  onChange={handleChange}
                   placeholder="Enter email here"
                   autoComplete="off"
+                  value={forms.email}
+                  onChange={handleChange}
                 />
                 {errors.email && (
                   <div className="invalid-feedback">{errors.email}</div>
                 )}
               </div>
 
-              {/* Mobile */}
               <div className="mb-3">
                 <label htmlFor="mob" className="form-label">
                   Enter Mobile Number
                 </label>
                 <input
                   type="text"
-                  className="form-control"
+                  className={`form-control ${errors.mob ? "is-invalid" : ""}`}
                   id="mob"
                   name="mob"
-                  value={form.mob}
-                  onChange={handleChange}
                   placeholder="Enter valid mobile number"
                   autoComplete="off"
+                  value={forms.mob}
+                  onChange={handleChange}
                 />
+                {errors.mob && (
+                  <div className="invalid-feedback">{errors.mob}</div>
+                )}
               </div>
 
-              {/* Message */}
               <div className="mb-3">
                 <label htmlFor="message" className="form-label">
                   Enter Message
@@ -124,13 +131,16 @@ function Contact() {
                 <textarea
                   id="message"
                   name="message"
-                  className="form-control"
-                  value={form.message}
-                  onChange={handleChange}
+                  className={`form-control ${
+                    errors.message ? "is-invalid" : ""
+                  }`}
+                  value={forms.message}
                 ></textarea>
+                {errors.message && (
+                  <div className="invalid-feedback">{errors.message}</div>
+                )}
               </div>
 
-              {/* Buttons */}
               <button type="submit" className="btn btn-primary">
                 Send message
               </button>
